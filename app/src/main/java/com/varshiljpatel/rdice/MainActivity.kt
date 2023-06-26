@@ -10,11 +10,14 @@ import java.util.Random
 import kotlin.properties.Delegates
 import android.os.Vibrator
 import android.os.VibrationEffect
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 @SuppressLint("ServiceCast")
 class MainActivity : AppCompatActivity() {
     private var randomInt by Delegates.notNull<Int>()
     private var flag : Boolean = true
+    private var prevRandomInt : Int = 0
     @RequiresApi(Build.VERSION_CODES.S)
 
     // Data Binding
@@ -25,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.hide()
+
         val vibrator = this.getSystemService(VIBRATOR_SERVICE) as Vibrator
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -32,19 +37,31 @@ class MainActivity : AppCompatActivity() {
             if (flag) {
 
                 if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                    vibrator.vibrate(VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE))
                 } else {
-                    vibrator.vibrate(100)
+                    vibrator.vibrate(75)
                 }
 
                 flag = false
-                binding.diceImg.setImageResource(R.drawable.dice0)
+                try {
+                    Glide.with(this)
+                        .asGif()
+                        .load(R.drawable.dice_gif)
+                        .apply(RequestOptions().centerCrop())
+                        .into(binding.diceImg)
+                } catch (e : Exception) {
+                    binding.diceImg.setImageResource(R.drawable.dice0)
+                }
                 binding.digitTxt.text = "..."
 
                 // Handler
-                Handler().postDelayed({
+                Handler(Looper.myLooper()!!).postDelayed({
                     try {
                         randomInt = Random().nextInt(6) + 1
+                        if (prevRandomInt % 2 == 0 && prevRandomInt == randomInt) {
+                            randomInt = Random().nextInt(6) + 1
+                        }
+                        prevRandomInt = randomInt
                         when (randomInt) {
                             1 -> binding.diceImg.setImageResource(R.drawable.dice1)
                             3 -> binding.diceImg.setImageResource(R.drawable.dice3)
