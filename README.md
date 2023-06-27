@@ -1,4 +1,4 @@
-<h2>Introducing RDise</h2>
+<h2>Introducing RDice</h2>
 
 [_Download_](https://bit.ly/RDice31) From here
 
