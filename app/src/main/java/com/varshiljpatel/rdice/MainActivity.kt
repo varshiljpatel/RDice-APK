@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 Handler(Looper.myLooper()!!).postDelayed({
                     try {
                         randomInt = Random().nextInt(6) + 1
-                        if (prevRandomInt % 2 == 0 && prevRandomInt == randomInt) {
+                        if (prevRandomInt == randomInt) {
                             randomInt = Random().nextInt(6) + 1
                         }
                         prevRandomInt = randomInt
